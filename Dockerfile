@@ -4,6 +4,8 @@ FROM rockylinux/rockylinux:8.5
 RUN yum -y install \
     nfs-utils \
     stunnel \
+    nc \
+    net-tools \
     && \
     yum -y clean all && \
     rm -rf /var/cache
@@ -39,7 +41,24 @@ RUN mkdir /home/share && \
     chmod 777 /home/share
 
 # add share directory to exported folders
-RUN echo "/home/share/ *(fsid=0,rw,sync)" >> /etc/exports
+RUN echo "/home/share/ 192.168.0.0/24(fsid=0,rw,sync)" >> /etc/exports && \
+    echo "/home/share/ 127.0.0.1(fsid=0,rw,sync,insecure)" >> /etc/exports
+
+
+# Add cert
+COPY nfs-tls.pem /etc/stunnel
+
+# inetd-style socket activation unit on port 2363 to launch stunnel with a timeout of ten minutes
+COPY MC-nfsd.socket /etc/systemd/system
+#socket to launch stunnel
+COPY MC-nfsd@.service /etc/systemd/system
+#stunnel control file for the NFS server
+COPY MC-nfsd.conf /etc/stunnel
+
+RUN systemctl enable MC-nfsd.socket
+
+# chroot() directory where stunnel will drop privileges
+RUN mkdir /var/empty/stunnel
 
 # start systemd - required!
 CMD ["/usr/sbin/init"]

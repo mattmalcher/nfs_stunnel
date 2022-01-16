@@ -8,12 +8,6 @@
 help:     ## Show this help.
 	@sed -ne '/@sed/!s/## //p' $(MAKEFILE_LIST)
 
-gen_key: ## generate a key/certificate to use for the connection
-	openssl req -newkey rsa:4096 -x509 -days 3650 -nodes \
-	-out nfs-tls.pem \
-	-keyout nfs-tls.pem \
-	-subj "/C=GB/ST=London/O=MART/OU=DEV/CN=exampledomain.com"
-
 build:
 	docker-compose build 
 
@@ -35,3 +29,25 @@ mount_plain:
 unmount_plain:
 	umount ~/mnt/plain
 	rmdir -p ~/mnt/plain
+
+gen_key: ## generate a key/certificate to use for the connection
+	openssl req -newkey rsa:4096 -x509 -days 3650 -nodes \
+	-out nfs-tls.pem \
+	-keyout nfs-tls.pem \
+	-subj "/C=GB/ST=London/O=MART/OU=DEV/CN=exampledomain.com"
+
+setup_client: ## configure a client machine
+	cp 3d-nfsd.socket /etc/systemd/system
+	cp 3d-nfsd@.service /etc/systemd/system
+	cp 3d-nfsd.conf /etc/stunnel
+	cp nfs-tls.pem /etc/stunnel
+
+	systemctl enable 3d-nfsd.socket
+	systemctl start 3d-nfsd.socket
+
+	echo "localhost:/ /home/share nfs noauto,vers=4.2,proto=tcp,port=2323 0 0" >> /etc/fstab
+	
+	mount /home/share
+
+firewall_exemption:
+	sudo iptables -w -I INPUT -p tcp --dport 2363 --syn -j ACCEPT

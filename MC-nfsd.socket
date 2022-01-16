@@ -1,0 +1,10 @@
+[Unit]
+Description=NFS over stunnel/TLS server
+
+[Socket]
+ListenStream=2363
+Accept=yes
+TimeoutSec=600
+
+[Install]
+WantedBy=sockets.target

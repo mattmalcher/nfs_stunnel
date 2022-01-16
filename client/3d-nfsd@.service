@@ -1,0 +1,6 @@
+[Unit]
+Description=NFS over stunnel/TLS client
+
+[Service]
+ExecStart=-/bin/stunnel /etc/stunnel/3d-nfsd.conf
+StandardInput=socket
