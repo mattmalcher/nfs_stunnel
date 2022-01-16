@@ -23,10 +23,10 @@ Running systemd seems like the most straightforward option, even if it does requ
 # TODO's
 Have gotten this all to work, but the following improvements are in order:
 
--The client setup in `client/3d-nfsd.conf` needs the host name / ip changing. Also, we probably want to use the commented out options for centos/rocky clients.
--The mount paths are probably not what we want
--The key file should probably have an actual domain in it
--If you can ssh to the server, then you can access the non stunnelled NFS share, but im not sure that really matters for the intended use case.
+- The client setup in `client/3d-nfsd.conf` needs the host name / ip changing. Also, we probably want to use the commented out options for centos/rocky clients.
+- The mount paths are probably not what we want
+- The key file should probably have an actual domain in it
+- If you can ssh to the server, then you can access the non stunnelled NFS share, but im not sure that really matters for the intended use case.
 - Never figured out why I couldnt mount NFS server in container via localhost, only from another machine.
 - Remove the 192.168.0.0/24 export from `/etc/exports` we only want the nfs share to be available over stunnel (which grabs it from localhost), not directly from other machines on the network (though this could be useful for development?)
 - can potentially remove nc from container now debugged.
