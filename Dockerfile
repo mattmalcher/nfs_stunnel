@@ -35,12 +35,14 @@ VOLUME ["/sys/fs/cgroup"]
 RUN systemctl enable nfs-server rpcbind
 
 # Allow clear text NFS on 2049 for testing (comment out for prod)
-#RUN iptables -w -I INPUT -p tcp --dport 2049 --syn -j ACCEPT
+RUN iptables -w -I INPUT -p tcp --dport 2049 --syn -j ACCEPT
 
 # # set up share directory
 RUN mkdir /home/share && \
-    chmod 777 /home/share && \
-    cp /etc/services /etc/nsswitch.conf /etc/hosts /home/share
+    chmod 777 /home/share
+
+# add share directory to exported folders
+RUN echo "/home/share/ *(fsid=0,rw,sync)" >> /etc/exports
 
 # start systemd - required!
 CMD ["/usr/sbin/init"]

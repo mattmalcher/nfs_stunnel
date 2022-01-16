@@ -5,6 +5,7 @@ services:
     entrypoint: /sbin/init
     privileged: true
     ports:
+      - 2049:2050
       - 2363:2363
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
