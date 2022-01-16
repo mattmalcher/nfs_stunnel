@@ -36,18 +36,29 @@ gen_key: ## generate a key/certificate to use for the connection
 	-keyout nfs-tls.pem \
 	-subj "/C=GB/ST=London/O=MART/OU=DEV/CN=exampledomain.com"
 
-setup_client: ## configure a client machine
-	cp client/3d-nfsd.socket /etc/systemd/system
-	cp client/3d-nfsd@.service /etc/systemd/system
-	cp client/3d-nfsd.conf /etc/stunnel
-	cp nfs-tls.pem /etc/stunnel
+scp_key:
+	scp nfs-tls.pem user@host:/folder
 
-	systemctl enable 3d-nfsd.socket
-	systemctl start 3d-nfsd.socket
+setup_client: add_firewall_exemption ## configure a client machine
+	sudo cp client/3d-nfsd.socket /etc/systemd/system
+	sudo cp client/3d-nfsd@.service /etc/systemd/system
+	sudo cp client/3d-nfsd.conf /etc/stunnel
+	sudo cp nfs-tls.pem /etc/stunnel
 
-	echo "localhost:/ /home/share nfs noauto,vers=4.2,proto=tcp,port=2323 0 0" >> /etc/fstab
-	
-	mount /home/share
+	sudo mkdir -p /var/empty/stunnel
 
-firewall_exemption:
+	sudo systemctl enable 3d-nfsd.socket
+	sudo systemctl start 3d-nfsd.socket
+
+	sudo echo "localhost:/ /home/share nfs noauto,vers=4.2,proto=tcp,port=2323 0 0" >> /etc/fstab
+
+mount_stunnel:
+	sudo mkdir /home/share
+	sudo mount /home/share
+
+unmount_stunnel:
+	sudo umount /home/share
+	sudo rmdir -p /home/share
+
+add_firewall_exemption:
 	sudo iptables -w -I INPUT -p tcp --dport 2363 --syn -j ACCEPT
