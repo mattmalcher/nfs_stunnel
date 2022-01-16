@@ -1,0 +1,13 @@
+version: "3.7"
+services:
+  rocky_nfs:
+    build: .
+    entrypoint: /sbin/init
+    privileged: true
+    ports:
+      - 2363:2363
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - type: bind
+        source: ./nfs_share
+        target: /home/share
