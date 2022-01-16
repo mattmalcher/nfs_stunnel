@@ -1,8 +1,8 @@
 # nfs_stunnel
-Attempt to create a dockerised NFS server using stunnel for encryption in transit.
+Proof of concept dockerised NFS server using stunnel for encryption in transit.
 
 # stunnel?
-Stunnel is kind of a proxy server you can use to wrap TLS encryption around services which dont natively support it. 
+Stunnel is kind of a proxy server you can use to wrap TLS encryption around services which dont natively support it (like NFS).
 
 # systemd...
 Docker containers are designed to host a single service, so they dont typically have an init service like systemd running inside them.
@@ -20,9 +20,21 @@ Options are:
 
 Running systemd seems like the most straightforward option, even if it does require additional container priveleges. 
 
+# TODO's
+Have gotten this all to work, but the following improvements are in order:
+
+-The client setup in `client/3d-nfsd.conf` needs the host name / ip changing. Also, we probably want to use the commented out options for centos/rocky clients.
+-The mount paths are probably not what we want
+-The key file should probably have an actual domain in it
+-If you can ssh to the server, then you can access the non stunnelled NFS share, but im not sure that really matters for the intended use case.
+- Never figured out why I couldnt mount NFS server in container via localhost, only from another machine.
+- Remove the 192.168.0.0/24 export from `/etc/exports` we only want the nfs share to be available over stunnel (which grabs it from localhost), not directly from other machines on the network (though this could be useful for development?)
+- can potentially remove nc from container now debugged.
+- really needs some validation that its working properly wrt permissions etc.
+
 ## Alternatives
-Share NFS over ssh - not really what it was meant for
-Use EFS or equivalent services which already offer encryption - £££
+Share NFS over ssh - not really what it was meant for.
+Use EFS or equivalent services which already offer encryption - £££ for performance we need.
 
 # Refs
 
