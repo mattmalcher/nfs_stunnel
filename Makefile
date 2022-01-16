@@ -37,9 +37,9 @@ gen_key: ## generate a key/certificate to use for the connection
 	-subj "/C=GB/ST=London/O=MART/OU=DEV/CN=exampledomain.com"
 
 setup_client: ## configure a client machine
-	cp 3d-nfsd.socket /etc/systemd/system
-	cp 3d-nfsd@.service /etc/systemd/system
-	cp 3d-nfsd.conf /etc/stunnel
+	cp client/3d-nfsd.socket /etc/systemd/system
+	cp client/3d-nfsd@.service /etc/systemd/system
+	cp client/3d-nfsd.conf /etc/stunnel
 	cp nfs-tls.pem /etc/stunnel
 
 	systemctl enable 3d-nfsd.socket
