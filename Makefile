@@ -18,7 +18,7 @@ build:
 	docker-compose build 
 
 run: 
-	docker-compose run --rm --name rocky_nfs_run -d rocky_nfs
+	docker-compose run --rm --name rocky_nfs_run --service-ports -d rocky_nfs
 
 exec:
 	docker exec -it rocky_nfs_run bash
@@ -26,3 +26,12 @@ exec:
 stop:
 	docker-compose down
 	rm -f nfs_share/*
+
+
+mount_plain: 
+	mkdir -p ~/mnt/plain
+	sudo mount -o port=2050 -o vers=4.2 -t nfs 127.0.0.1:/ ~/mnt/plain/
+
+unmount_plain:
+	umount ~/mnt/plain
+	rmdir -p ~/mnt/plain

@@ -34,9 +34,6 @@ VOLUME ["/sys/fs/cgroup"]
 # Should also start required services such as rpcbind & nfs-idmapd
 RUN systemctl enable nfs-server rpcbind
 
-# Allow clear text NFS on 2049 for testing (comment out for prod)
-RUN iptables -w -I INPUT -p tcp --dport 2049 --syn -j ACCEPT
-
 # # set up share directory
 RUN mkdir /home/share && \
     chmod 777 /home/share
